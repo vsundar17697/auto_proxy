@@ -21,10 +21,10 @@ proxyDisable(){
 # }
 
 
-# if [ $EUID -ne 0 ]; then
-#     echo "Please run as root"
-#     sudo echo "Sudo permission granted"
-# fi
+if [ $EUID -ne 0 ]; then
+    echo "Please run as root"
+    exec sudo "$0" "$@" 
+fi
 
 input="~/.proxy_manager/proxy_list.txt"
 interface_id="$(ls /sys/class/net | grep w)"
@@ -34,8 +34,8 @@ status=0
 while IFS=, read ssid proxy port || [[ -n "$ssid" ]]; do
     echo "$ssid $proxy $port" 
     if [ cur_network -eq $ssid ];then
-        echo "Proxy set for network $ssid"
         proxyEnable $proxy $port
+        echo "Proxy set for network $ssid"
         status=1
         break
     fi

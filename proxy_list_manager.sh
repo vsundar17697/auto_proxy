@@ -1,7 +1,19 @@
-file="~/.proxy_manager/proxy_list.txt"
-temp="~/.proxy_manager/temp_list.txt"
+file="proxy_list.txt"
+temp="temp_list.txt"
 flag=0
-while getopts ":adr" opt; do
+
+proxyDisable(){
+    sudo gsettings set org.gnome.system.proxy mode 'none'
+}
+
+if [ $EUID -ne 0 ]; then
+    echo "Please run as root"
+    exec sudo "$0" "$@"
+fi
+
+echo "Permission achieved"
+
+while getopts ":adrchov" opt; do
     case $opt in 
 
         a) 
@@ -24,6 +36,16 @@ while getopts ":adr" opt; do
             shift 1
             ;;
 
+        o)
+            flag=5; # Deactivates all active proxies
+            shift 1
+            ;;
+
+        v)
+            flag=6; # Views currentlu active proxy profile
+            shift 1
+            ;;
+
         h)
             flag=-1;
             shift 1
@@ -38,10 +60,11 @@ while getopts ":adr" opt; do
 done
 
 if [ $flag -eq 0 ]; then
-    bash ~/etc/network/if-up.d/proxy_manager.sh
+    ./proxy_manager.sh
+    echo "Proxy adjusted for the current network !"
 
-elif [ $flag -eq 1]; then
-    if [$# -eq 3]; then
+elif [ $flag -eq 1 ]; then
+    if [ $# -eq 3 ]; then
         write_config="\"$1\",'$2',$3"
         echo $write_config >> $file
     else
@@ -49,7 +72,9 @@ elif [ $flag -eq 1]; then
         exit
     fi
 
-elif [ $flag -eq 2]; then
+    echo "Supplied information added to registry ! "
+
+elif [ $flag -eq 2 ]; then
     config_to_remove="$1"
     while read -r line
     do
@@ -57,8 +82,11 @@ elif [ $flag -eq 2]; then
     done < $file > $temp
     mv $temp $file
 
-elif [ $flag -eq 3]; then
-    echo "" > $file
+    echo "Performed the required action ! "
+
+elif [ $flag -eq 3 ]; then
+    > $file
+    echo "Registry empty ! "
 
 elif [ $flag -eq 4 ]; then
     proxy="$(gsettings get org.gnome.system.proxy.https host)"
@@ -68,5 +96,20 @@ elif [ $flag -eq 4 ]; then
 
     write_config="$cur_network,$proxy,$port"
     echo $write_config >> $file
+    echo "Current network details added to registry"
+
+elif [ $flag -eq 5 ]; then
+    proxyDisable
+    echo "Proxy disabled"
+
+elif [ $flag -eq 6 ]; then
+    proxy="$(gsettings get org.gnome.system.proxy.https host)"
+    port="$(gsettings get org.gnome.system.proxy.https port)"
+    interface_id="$(ls /sys/class/net | grep w)"
+    cur_network="$(iwconfig $interface_id | grep 'ESSID' | grep -oh '\".*\"')"
+
+    echo "SSID: $cur_network"
+    echo "Proxy: $proxy"
+    echo "Port: $port"
 
 fi 
