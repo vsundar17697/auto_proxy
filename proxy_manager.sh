@@ -26,7 +26,7 @@ if [ $EUID -ne 0 ]; then
     exec sudo "$0" "$@" 
 fi
 
-input="~/.proxy_manager/proxy_list.txt"
+input="proxy_list.txt"
 interface_id="$(ls /sys/class/net | grep w)"
 cur_network="$(iwconfig $interface_id | grep 'ESSID' | grep -oh '\".*\"')"
 status=0

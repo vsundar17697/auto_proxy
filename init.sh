@@ -10,8 +10,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 mkdir ~/.proxy_manager
 touch ~/.proxy_manager/proxy_list.txt
 cp -r $DIR/* ~/.proxy_manager
-chmod -x+wr ~/.proxy_manager/*.txt
-chmod +xr-w ~/.proxy_manager/*.sh
+sudo chown root *
+chmod +xwr ~/.proxy_manager/*
 
 echo "Done initialization"
 # cp $DIR/proxy_manager.sh /etc/network/if-up.d/proxy_manager
