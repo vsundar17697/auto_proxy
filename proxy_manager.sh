@@ -1,3 +1,5 @@
+#!/bin/bash
+
 proxyEnable(){
     sudo gsettings set org.gnome.system.proxy.http host $1
     sudo gsettings set org.gnome.system.proxy.http port $2
@@ -33,14 +35,15 @@ if [ $EUID -ne 0 ]; then
     exec sudo "$0" "$@" 
 fi
 
-input="proxy_list.txt"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+input="$DIR/proxy_list.txt"
 interface_id="$(ls /sys/class/net | grep w)"
 cur_network="$(iwconfig $interface_id | grep 'ESSID' | grep -oh '\".*\"')"
 status=0
 
 while IFS=, read ssid proxy port || [[ -n "$ssid" ]]; do
     echo "$ssid $proxy $port" 
-    if [ cur_network -eq $ssid ];then
+    if [[ $cur_network == $ssid ]] || [[ $cur_network == \"$ssid\" ]];then
         proxyEnable $proxy $port
         echo "Proxy set for network $ssid"
         status=1

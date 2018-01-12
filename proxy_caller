@@ -1,0 +1,4 @@
+#!/bin/bash
+
+bash ~/.proxy_manager/proxy_manager.sh
+echo "Detected change $1 $2" >> ~/.proxy_manager/proxy_calls.txt

@@ -1,8 +1,12 @@
-file="proxy_list.txt"
-temp="temp_list.txt"
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+file="$DIR/proxy_list.txt"
+temp="$DIR/temp_list.txt"
 flag=0
 
 proxyDisable(){
+    unset {http,https,ftp}_proxy
     sudo gsettings set org.gnome.system.proxy mode 'none'
 }
 
@@ -60,8 +64,7 @@ while getopts ":adrchov" opt; do
 done
 
 if [ $flag -eq 0 ]; then
-    ./proxy_manager.sh
-    echo "Proxy adjusted for the current network !"
+    bash $DIR/proxy_manager.sh
 
 elif [ $flag -eq 1 ]; then
     if [ $# -eq 3 ]; then
