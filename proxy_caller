@@ -1,4 +1,6 @@
 #!/bin/bash
 
-bash ~/.proxy_manager/proxy_manager.sh
-echo "Detected change $1 $2" >> ~/.proxy_manager/proxy_calls.txt
+cd ~/.proxy_manager
+. ./proxy_manager.sh
+t="$(date +%T)"
+echo "$t Detected change $1 $2" >> proxy_calls.txt

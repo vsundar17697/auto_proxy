@@ -1,8 +1,8 @@
 #!/bin/bash
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-file="$DIR/proxy_list.txt"
-temp="$DIR/temp_list.txt"
+cd ~/.proxy_manager
+file="proxy_list.txt"
+temp="temp_list.txt"
 flag=0
 
 proxyDisable(){
@@ -64,7 +64,7 @@ while getopts ":adrchov" opt; do
 done
 
 if [ $flag -eq 0 ]; then
-    bash $DIR/proxy_manager.sh
+    . ./proxy_manager.sh
 
 elif [ $flag -eq 1 ]; then
     if [ $# -eq 3 ]; then

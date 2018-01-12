@@ -35,8 +35,8 @@ if [ $EUID -ne 0 ]; then
     exec sudo "$0" "$@" 
 fi
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-input="$DIR/proxy_list.txt"
+cd ~/.proxy_manager
+input="proxy_list.txt"
 interface_id="$(ls /sys/class/net | grep w)"
 cur_network="$(iwconfig $interface_id | grep 'ESSID' | grep -oh '\".*\"')"
 status=0
