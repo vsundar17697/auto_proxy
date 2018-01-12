@@ -7,11 +7,18 @@ proxyEnable(){
     sudo gsettings set org.gnome.system.proxy.ftp port $2
     sudo gsettings set org.gnome.system.proxy.socks host $1
     sudo gsettings set org.gnome.system.proxy.socks port $2
+    export {http,https,ftp}_proxy="$1:$2"
     sudo gsettings set org.gnome.system.proxy mode 'manual'
     return 1
 }
 
+disableProxyForTheseAlone(){
+    #Proxy will be disabled for these sites
+    export no_proxy="localhost,127.0.0.1"
+}
+
 proxyDisable(){
+    unset {http,https,ftp}_proxy
     sudo gsettings set org.gnome.system.proxy mode 'none'
 }
 
